@@ -11,7 +11,8 @@ class TcpdfEngine extends AbstractPdfEngine {
  */
 	public function __construct(CakePdf $Pdf) {
 		parent::__construct($Pdf);
-		App::import('Vendor', 'CakePdf.TCPDF', array('file' => 'tcpdf' . DS . 'tcpdf.php'));
+        define('K_PATH_IMAGES', WWW_ROOT . 'img' . DS);
+		App::import('Vendor', 'TCPDF', array('file' => 'tecnick.com' . DS . 'tcpdf' . DS . 'tcpdf.php'));
 	}
 
 /**
@@ -20,11 +21,33 @@ class TcpdfEngine extends AbstractPdfEngine {
  * @return string raw pdf data
  */
 	public function output() {
+        $config = Configure::read('CakePdf');
+        $margin = &$config['margin'];
 		//TCPDF often produces a whole bunch of errors, although there is a pdf created when debug = 0
 		//Configure::write('debug', 0);
 		$TCPDF = new TCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
-		$TCPDF->AddPage();
-		$TCPDF->writeHTML($this->_Pdf->html());
+        $pdf = &$TCPDF;
+        $TCPDF->setHeaderData('logo.jpg', '50', '', "Adresse\nfoo");
+        //$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 063', PDF_HEADER_STRING);
+
+        // set header and footer fonts
+        $TCPDF->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $TCPDF->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+        // set default monospaced font
+        $TCPDF->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+        // set margins
+        $TCPDF->SetMargins($margin['left'], $margin['top'], $margin['right']);
+        $TCPDF->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $TCPDF->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+        $TCPDF->AddPage();
+        $html = $this->_Pdf->html();
+        $tidy = preg_replace('/\s+\s+/', ' ', $html);
+		$TCPDF->writeHTML($tidy);
 		return $TCPDF->Output('', 'S');
 	}
 }
