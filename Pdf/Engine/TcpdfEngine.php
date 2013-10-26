@@ -28,9 +28,7 @@ class TcpdfEngine extends AbstractPdfEngine {
 		//TCPDF often produces a whole bunch of errors, although there is a pdf created when debug = 0
 		//Configure::write('debug', 0);
 		$TCPDF = new TCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
-        $pdf = &$TCPDF;
         $TCPDF->setHeaderData($header['logo'], $header['logo_width'], $header['title'], $header['text']);
-        //$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 063', PDF_HEADER_STRING);
 
         // set header and footer fonts
         $TCPDF->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -45,7 +43,7 @@ class TcpdfEngine extends AbstractPdfEngine {
         $TCPDF->SetFooterMargin(PDF_MARGIN_FOOTER);
 
         // set auto page breaks
-        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+        $TCPDF->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
         $TCPDF->AddPage();
         $html = $this->_Pdf->html();
         $tidy = preg_replace('/\s+\s+/', ' ', $html);
