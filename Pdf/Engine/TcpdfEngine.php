@@ -39,8 +39,8 @@ class TcpdfEngine extends AbstractPdfEngine {
 
         // set margins
         $TCPDF->SetMargins($margin['left'], $margin['top'], $margin['right']);
-        $TCPDF->SetHeaderMargin(PDF_MARGIN_HEADER);
-        $TCPDF->SetFooterMargin(PDF_MARGIN_FOOTER);
+        $TCPDF->SetHeaderMargin(PDF_MARGIN_HEADER*2);
+        $TCPDF->SetFooterMargin(PDF_MARGIN_FOOTER*2);
 
         // set auto page breaks
         $TCPDF->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
