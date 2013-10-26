@@ -23,11 +23,13 @@ class TcpdfEngine extends AbstractPdfEngine {
 	public function output() {
         $config = Configure::read('CakePdf');
         $margin = &$config['margin'];
+        $options = &$config['options'];
+        $header = &$options['header'];
 		//TCPDF often produces a whole bunch of errors, although there is a pdf created when debug = 0
 		//Configure::write('debug', 0);
 		$TCPDF = new TCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
         $pdf = &$TCPDF;
-        $TCPDF->setHeaderData('logo.jpg', '50', '', "Adresse\nfoo");
+        $TCPDF->setHeaderData($header['logo'], $header['logo_width'], $header['title'], $header['text']);
         //$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 063', PDF_HEADER_STRING);
 
         // set header and footer fonts
