@@ -28,12 +28,15 @@ class TcpdfEngine extends AbstractPdfEngine {
 		//TCPDF often produces a whole bunch of errors, although there is a pdf created when debug = 0
 		//Configure::write('debug', 0);
 		$TCPDF = new TCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
+        $fontfile = APP . 'Lib' . DS . 'Fonts' . DS . 'Open_Sans' . DS;
+        $customfont = $TCPDF->addTTFfont($fontfile . 'OpenSans-Regular.ttf', 'TrueTypeUnicode', '', 32);
+        $TCPDF->addTTFfont($fontfile . 'OpenSans-Bold.ttf', 'TrueTypeUnicode', '', 32);
         $TCPDF->setHeaderData($header['logo'], $header['logo_width'], $header['title'], $header['text']);
 
         // set header and footer fonts
-        $TCPDF->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-        $TCPDF->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-
+        $TCPDF->setHeaderFont(Array($customfont, '', PDF_FONT_SIZE_MAIN));
+        $TCPDF->setFooterFont(Array($customfont, '', PDF_FONT_SIZE_DATA));
+        $TCPDF->Setfont($customfont, '', PDF_FONT_SIZE_MAIN);
         // set default monospaced font
         $TCPDF->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
