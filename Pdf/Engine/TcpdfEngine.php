@@ -1,6 +1,7 @@
 <?php
 App::uses('AbstractPdfEngine', 'CakePdf.Pdf/Engine');
 App::uses('Multibyte', 'I18n');
+define('K_PATH_IMAGES', WWW_ROOT . 'img' . DS);
 
 class TcpdfEngine extends AbstractPdfEngine {
 
@@ -10,8 +11,7 @@ class TcpdfEngine extends AbstractPdfEngine {
  * @param $Pdf CakePdf instance
  */
 	public function __construct(CakePdf $Pdf) {
-		parent::__construct($Pdf);
-        define('K_PATH_IMAGES', WWW_ROOT . 'img' . DS);
+		parent::__construct($Pdf);       
 		App::import('Vendor', 'TCPDF', array('file' => 'tecnick.com' . DS . 'tcpdf' . DS . 'tcpdf.php'));
 	}
 
@@ -27,7 +27,8 @@ class TcpdfEngine extends AbstractPdfEngine {
         $header = &$options['header'];
 		//TCPDF often produces a whole bunch of errors, although there is a pdf created when debug = 0
 		//Configure::write('debug', 0);
-		$TCPDF = new TCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
+		$TCPDF = new MyTCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
+        //debug(K_PATH_IMAGES);
         $fontfile = APP . 'Lib' . DS . 'Fonts' . DS . 'Open_Sans' . DS;
         $customfont = $TCPDF->addTTFfont($fontfile . 'OpenSans-Regular.ttf', 'TrueTypeUnicode', '', 32);
         $TCPDF->addTTFfont($fontfile . 'OpenSans-Bold.ttf', 'TrueTypeUnicode', '', 32);
@@ -53,4 +54,16 @@ class TcpdfEngine extends AbstractPdfEngine {
 		$TCPDF->writeHTML($tidy);
 		return $TCPDF->Output('', 'S');
 	}
+}
+
+class MyTCPDF extends TCPDF {
+   public function Footer()
+    {        
+        if (!empty($this->title))
+        {
+            $this->SetY(-15);
+            $this->Cell(0, 0, $this->title, 'LTRB', true, 'C', 0, '', 0, false, 'M', 'C');
+        }
+        parent::Footer();
+    }
 }
