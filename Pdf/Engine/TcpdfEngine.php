@@ -11,8 +11,9 @@ class TcpdfEngine extends AbstractPdfEngine {
  * @param $Pdf CakePdf instance
  */
 	public function __construct(CakePdf $Pdf) {
-		parent::__construct($Pdf);       
-		App::import('Vendor', 'TCPDF', array('file' => 'tecnick.com' . DS . 'tcpdf' . DS . 'tcpdf.php'));
+		parent::__construct($Pdf);
+        if (!class_exists('TCPDF'))        
+            App::import('Vendor', 'TCPDF', array('file' => 'tecnick.com' . DS . 'tcpdf' . DS . 'tcpdf.php'));        
 	}
 
 /**
