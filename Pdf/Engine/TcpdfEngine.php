@@ -1,4 +1,5 @@
 <?php
+define('K_TCPDF_CALLS_IN_HTML', true);
 App::uses('AbstractPdfEngine', 'CakePdf.Pdf/Engine');
 App::uses('Multibyte', 'I18n');
 define('K_PATH_IMAGES', WWW_ROOT . 'img' . DS);
@@ -11,9 +12,11 @@ class TcpdfEngine extends AbstractPdfEngine {
  * @param $Pdf CakePdf instance
  */
 	public function __construct(CakePdf $Pdf) {
-		parent::__construct($Pdf);
-        if (!class_exists('TCPDF'))        
-            App::import('Vendor', 'TCPDF', array('file' => 'tecnick.com' . DS . 'tcpdf' . DS . 'tcpdf.php'));        
+        parent::__construct($Pdf);
+        if (!class_exists('TCPDF'))
+            App::import('Vendor', 'TCPDF', array('file' => 'tecnick.com' . DS . 'tcpdf' . DS . 'tcpdf.php'));
+        global $TCPDF;
+        $TCPDF = new MyTCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
 	}
 
 /**
@@ -22,17 +25,17 @@ class TcpdfEngine extends AbstractPdfEngine {
  * @return string raw pdf data
  */
 	public function output() {
+        global $TCPDF;
         $config = Configure::read('CakePdf');
         $margin = &$config['margin'];
         $options = &$config['options'];
         $header = &$options['header'];
 		//TCPDF often produces a whole bunch of errors, although there is a pdf created when debug = 0
 		//Configure::write('debug', 0);
-		$TCPDF = new MyTCPDF($this->_Pdf->orientation(), 'mm', $this->_Pdf->pageSize());
         //debug(K_PATH_IMAGES);
         $fontfile = APP . 'Lib' . DS . 'Fonts' . DS . 'Open_Sans' . DS;
-        $customfont = $TCPDF->addTTFfont($fontfile . 'OpenSans-Regular.ttf', 'TrueTypeUnicode', '', 32);
-        $TCPDF->addTTFfont($fontfile . 'OpenSans-Bold.ttf', 'TrueTypeUnicode', '', 32);
+        $customfont = TCPDF_FONTS::addTTFfont($fontfile . 'OpenSans-Regular.ttf', 'TrueTypeUnicode', '', 32);
+        TCPDF_FONTS::addTTFfont($fontfile . 'OpenSans-Bold.ttf', 'TrueTypeUnicode', '', 32);
         $TCPDF->setHeaderData($header['logo'], $header['logo_width'], $header['title'], $header['text']);
 
         // set header and footer fonts
@@ -59,7 +62,7 @@ class TcpdfEngine extends AbstractPdfEngine {
 
 class MyTCPDF extends TCPDF {
    public function Footer()
-    {        
+    {
         if (!empty($this->title))
         {
             $this->SetY(-15);
